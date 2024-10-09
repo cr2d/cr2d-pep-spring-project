@@ -1,7 +1,10 @@
 package com.example.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
+import com.example.entity.Account;
+import com.example.entity.Message;
+import com.example.service.*;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -11,5 +14,22 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class SocialMediaController {
+    AccountService accountService;
+    MessageService messageService;
+
+    @PostMapping("/register")
+    public Account register(@RequestBody Account newUser) {
+        // Logic to register a new user
+        Account add = accountService.addUser(newUser);
+        if(add !=null){
+            return add;
+        }
+        return newUser;
+    }
+    @PostMapping("/login")
+    public Account login(@RequestBody Account loginRequest) {
+        // Logic to authenticate user login
+        return loginRequest;
+    }
 
 }
