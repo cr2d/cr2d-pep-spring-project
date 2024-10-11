@@ -1,10 +1,13 @@
 package com.example.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.entity.Account;
 import com.example.entity.Message;
 import com.example.service.*;
+import java.util.List;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -14,22 +17,73 @@ import com.example.service.*;
  */
 @RestController
 public class SocialMediaController {
-    AccountService accountService;
-    MessageService messageService;
+    private AccountService accountService;
+    private MessageService messageService;
 
+    @Autowired
+    SocialMediaController(AccountService accountService, MessageService messageService){
+        this.accountService = accountService;
+        this.messageService = messageService;
+    }
+
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> getMessagesByUser(@PathVariable Integer accountId){
+        return null;
+    }
     @PostMapping("/register")
-    public Account register(@RequestBody Account newUser) {
+    public ResponseEntity<Account> register(@RequestBody Account newUser) {
         // Logic to register a new user
         Account add = accountService.addUser(newUser);
-        if(add !=null){
-            return add;
+        if(add == null){
+            return ResponseEntity.status(409).body(null);
         }
-        return newUser;
+        return ResponseEntity.ok(add);
     }
     @PostMapping("/login")
-    public Account login(@RequestBody Account loginRequest) {
+    public ResponseEntity<Account> login(@RequestBody Account loginRequest) {
         // Logic to authenticate user login
-        return loginRequest;
+        Account verify = accountService.checkUsers(loginRequest);
+        if(verify == null){
+            return ResponseEntity.status(401).body(null);
+        }
+        return ResponseEntity.ok(verify);
     }
+    @PostMapping("/messages")
+    public ResponseEntity<Message> newPost(@RequestBody Message message){
+        Message send = messageService.postMessage(message);
+        if(send == null){
+            return ResponseEntity.status(400).body(null);
+        }
+        return ResponseEntity.ok(send);
 
+    }
+    @GetMapping("/messages")
+    public ResponseEntity<List<Message>> getAll(){
+        List<Message> messages = messageService.findAllMessages();
+        return ResponseEntity.ok(messages);
+    }
+    @GetMapping("/messages/{messageId}")
+    public ResponseEntity<Message> getMessageById(@PathVariable Integer messageId ){
+        Message message = messageService.getMessageById(messageId);
+        if(message == null){
+            return ResponseEntity.status(200).body(null);
+        }
+        return ResponseEntity.ok(message);
+    }
+    @DeleteMapping("/messages/{messageId}")
+    public ResponseEntity<Integer> deleteMesssageById(@PathVariable Integer messageId ){
+        Message message = messageService.deleteMesssage(messageId);
+        if(message == null){
+            return ResponseEntity.status(200).body(null);
+        }
+        return ResponseEntity.ok(1);
+    }
+    @PatchMapping("/messages/{messageId}")
+    public ResponseEntity<Integer> updateMessage(@PathVariable Integer messageId, @RequestBody Message message){
+        Message newMessage = messageService.update(message,messageId);
+        if(newMessage == null){
+            return ResponseEntity.status(400).body(null);
+        }
+        return ResponseEntity.ok(1);
+    }
 }
