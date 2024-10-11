@@ -18,7 +18,7 @@ public class MessageService {
        // this.accountRepository = accountRepository;
     }
     public Message postMessage(Message message){
-        Optional<Message> accountUser = messageRepository.findByPostedBy(message.getPostedBy());
+        Optional<Message> accountUser = messageRepository.findById(message.getPostedBy());
         if(message.getMessageText() != "" && message.getMessageText().length() <= 255){
             if(accountUser.isPresent()){
                 return messageRepository.save(message);
@@ -30,8 +30,11 @@ public class MessageService {
         return messageRepository.findAll();
     }
     public List<Message> findAllMessagesByUser(Integer userId){
-        //return messageRepository.findAllById(userId);
-        return null;
+        //messageRepository.findByPostedBy(null)
+        //messageRepository.findById(userId);
+        return messageRepository.findByPostedBy(userId);
+
+        //return null;
     }
     public Message getMessageById(Integer id){
         Optional<Message> message = messageRepository.findById(id);

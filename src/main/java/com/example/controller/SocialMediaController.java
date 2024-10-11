@@ -28,7 +28,8 @@ public class SocialMediaController {
 
     @GetMapping("/accounts/{accountId}/messages")
     public ResponseEntity<List<Message>> getMessagesByUser(@PathVariable Integer accountId){
-        return null;
+        List<Message> messages = messageService.findAllMessagesByUser(accountId);
+        return ResponseEntity.ok(messages);
     }
     @PostMapping("/register")
     public ResponseEntity<Account> register(@RequestBody Account newUser) {
